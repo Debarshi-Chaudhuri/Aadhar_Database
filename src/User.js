@@ -13,6 +13,10 @@ class User extends Component{
       Address:'',
       Aadhar:'',
       Email:'',
+      vn:true,
+      ve:true,
+      vf:true,
+      vp:true,
       disabled:true,
       details:[]
     }
@@ -34,12 +38,51 @@ class User extends Component{
     DateOfBirth:'',
     Address:'',
     Aadhar:'',
-    Email:'',},()=>this.componentDidMount())
+    Email:'',
+    vn:true,
+    ve:true,
+    vf:true,
+    vp:true,
+    disabled:true,},()=>this.componentDidMount())
     
   }
   change=(event)=>{
-    this.setState({[event.target.name]:event.target.value});
-
+    const reg = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const re = /^\d{10}$/;
+    const ch=`${event.target.name}`;
+    this.setState({[event.target.name]:event.target.value},()=>{
+      switch(ch){
+        case 'Father':
+          if(this.state.Father.length > 2)
+          this.setState({vf:false});
+          else
+          this.setState({vf:true})
+          break;
+        case 'Name':
+          if(this.state.Name.length > 2)
+          this.setState({vn:false});
+          else
+          this.setState({vn:true})
+          break;
+        
+        case 'Email':
+          if(reg.test(this.state.Email))
+          this.setState({ve:false});
+          else
+          this.setState({ve:true})
+          break;
+        case 'Phone':
+          if(re.test(this.state.Phone))
+          this.setState({vp:false});
+          else
+          this.setState({vp:true})
+          break;
+      }
+      const {vp,vf,ve,vn}=this.state
+      if(!vp && !vf && !ve && !vn)
+      this.setState({disabled:false})
+    });
+    
   }
   componentDidMount(){
     let a=[]
@@ -61,13 +104,15 @@ class User extends Component{
       <div>
         
         <ul>
-          Name : <input type='text' onChange={this.change} name='Name' value={this.state.Name} />
+          Name : <input type='text' onChange={this.change} name='Name' value={this.state.Name} />{
+            this.state.vn && <>&nbsp;Length must be greater than 2</>
+          }
         </ul>
         <ul>
-          Phone : <input type='text' onChange={this.change} name='Phone' value={this.state.Phone} />
+          Phone : <input type='text' onChange={this.change} name='Phone' value={this.state.Phone} />{this.state.vp && <>&nbsp;Not a proper phone number</>}
         </ul>
         <ul>
-          Father's Name : <input type='text' onChange={this.change} name='Father' value={this.state.Father} />
+          Father's Name : <input type='text' onChange={this.change} name='Father' value={this.state.Father} />{this.state.vf && <>&nbsp;Length must be greater than 2</>}
         </ul>
         <ul>
           Date of Birth : <input type='text' onChange={this.change} name='DateOfBirth' value={this.state.DateOfBirth} />
@@ -76,7 +121,7 @@ class User extends Component{
           Address : <input type='text' onChange={this.change} name='Address' value={this.state.Address} />
         </ul>
         <ul>
-          Email : <input type='email' onChange={this.change} name='Email' value={this.state.Email} />
+          Email : <input type='email' onChange={this.change} name='Email' value={this.state.Email} />{this.state.ve && <>&nbsp;Not a proper mail id</>}
         </ul>
         <ul>
           Aadhar Number : {this.state.Aadhar}
